@@ -1,0 +1,136 @@
+﻿@model TicketingSystem.Models.TicketRequestModel
+
+@{
+    ViewBag.Title = TicketingSystem.Resource.CreateTicket;
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" id="createTicketForm">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new {@id="projectName", @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartmentName, htmlAttributes: new {@class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("DepartmentName", null, TicketingSystem.Resource.SelectDepartment, htmlAttributes: new { @id = "departmentName", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DepartmentName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group" id="divEmployee" style="display:none">
+            @Html.LabelFor(model => model.EmployeeName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("EmployeeName", null, TicketingSystem.Resource.SelectEmployee, htmlAttributes: new {@id="employeeName" ,@class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new {@id="description", @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" id="btnCreate" class="btn btn-default">@TicketingSystem.Resource.Create</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+    @Scripts.Render("~/bundles/jquery")
+
+<script>
+    $('#departmentName').change(function () {
+        var departmentName = $("#departmentName").val();
+        if (departmentName != "") {
+            $.getJSON('/EmployeeDepartment/Get?departmentname=' + departmentName, function (data) {
+                 var message = `@Html.Raw(TicketingSystem.Resource.SelectEmployee)`;
+                var items = '<option>'+message +'</option>';
+                $.each(data, function (i, employeeList) {
+                    items += " <option value='" + employeeList + "'>" + employeeList + "</option>";
+                });
+                $('#employeeName').html(items);
+                $("#divEmployee").show()
+            });
+        }
+            else
+            {
+                var items = "";
+            $('#employeeName').html(items);
+            $("#divEmployee").hide()
+            }
+        
+    });
+
+    $('#btnCreate').click(function () {
+      
+        var departmentName = $("#departmentName").val();
+        var employeeName = $("#employeeName").val();
+        var projectName = $("#projectName").val();
+        var description = $("#description").val();
+        var selectEmployeeMessage = `@Html.Raw(TicketingSystem.Resource.SelectEmployee)`;
+        if (projectName == "") {
+              var message = `@Html.Raw(TicketingSystem.Resource.ProjectNameError)`;
+            alert(message);
+        }
+        else if (departmentName == "") {
+             var message = `@Html.Raw(TicketingSystem.Resource.DepartmentError)`;
+            alert(message);
+        }
+        else if (employeeName == selectEmployeeMessage) {
+               var message = `@Html.Raw(TicketingSystem.Resource.EmployeeError)`;
+            alert(message);
+        }
+        else if (description == "") {
+               var message = `@Html.Raw(TicketingSystem.Resource.DescriptionError)`;
+            alert(message);
+        }
+        else {
+            var ticketRequestModelObject = new Object();
+            ticketRequestModelObject.ProjectName = projectName;
+
+            ticketRequestModelObject.EmployeeName = employeeName;
+            ticketRequestModelObject.DepartmentName = departmentName;
+            ticketRequestModelObject.Description = description;
+
+                $.ajax({
+                    type: "Post",
+                    url: "/TicketRequests/CreateTicket",
+                    data: {
+                        ticketRequestModel: JSON.stringify(ticketRequestModelObject)
+                    },
+                    cache: false,
+                    success: function (result) {
+                        $("#projectName").val("");                      
+                        $("#departmentName").val("@TicketingSystem.Resource.SelectDepartment");
+                        $("#description").val("");
+                        $("#employeeName").val("@TicketingSystem.Resource.SelectEmployee");
+                        $("#divEmployee").hide();
+                        var message = `@Html.Raw(TicketingSystem.Resource.SuccessMessage)`;
+                                               alert(message);
+                    }
+                });
+
+        }
+
+
+    });
+   
+</script>

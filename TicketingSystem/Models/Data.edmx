@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TicketingSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DepartmentList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DepartmentName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedDate" Type="smalldatetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EmployeeDepartmentDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" />
+          <Property Name="DepartmentId" Type="int" />
+          <Property Name="CreatedDate" Type="smalldatetime" />
+        </EntityType>
+        <EntityType Name="EmployeeList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar(max)" />
+          <Property Name="CreatedDate" Type="smalldatetime" />
+        </EntityType>
+        <EntityType Name="TicketRequests">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="EmployeeDeparmentId" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedDate" Type="smalldatetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_EmployeeDepartmentDetails_DepartmentList">
+          <End Role="DepartmentList" Type="Self.DepartmentList" Multiplicity="0..1" />
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartmentList">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentDetails_EmployeeList">
+          <End Role="EmployeeList" Type="Self.EmployeeList" Multiplicity="0..1" />
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeList">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TicketRequests_EmployeeDepartmentDetails">
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetails" Multiplicity="1" />
+          <End Role="TicketRequests" Type="Self.TicketRequests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TicketRequests">
+              <PropertyRef Name="EmployeeDeparmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TicketingSystemModelStoreContainer">
+          <EntitySet Name="DepartmentList" EntityType="Self.DepartmentList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeDepartmentDetails" EntityType="Self.EmployeeDepartmentDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeList" EntityType="Self.EmployeeList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TicketRequests" EntityType="Self.TicketRequests" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_EmployeeDepartmentDetails_DepartmentList" Association="Self.FK_EmployeeDepartmentDetails_DepartmentList">
+            <End Role="DepartmentList" EntitySet="DepartmentList" />
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentDetails_EmployeeList" Association="Self.FK_EmployeeDepartmentDetails_EmployeeList">
+            <End Role="EmployeeList" EntitySet="EmployeeList" />
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TicketRequests_EmployeeDepartmentDetails" Association="Self.FK_TicketRequests_EmployeeDepartmentDetails">
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+            <End Role="TicketRequests" EntitySet="TicketRequests" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TicketingSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="DepartmentList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DepartmentName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="EmployeeDepartmentDetails" Relationship="Self.FK_EmployeeDepartmentDetails_DepartmentList" FromRole="DepartmentList" ToRole="EmployeeDepartmentDetails" />
+        </EntityType>
+        <EntityType Name="EmployeeDepartmentDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="DepartmentList" Relationship="Self.FK_EmployeeDepartmentDetails_DepartmentList" FromRole="EmployeeDepartmentDetails" ToRole="DepartmentList" />
+          <NavigationProperty Name="EmployeeList" Relationship="Self.FK_EmployeeDepartmentDetails_EmployeeList" FromRole="EmployeeDepartmentDetails" ToRole="EmployeeList" />
+          <NavigationProperty Name="TicketRequests" Relationship="Self.FK_TicketRequests_EmployeeDepartmentDetails" FromRole="EmployeeDepartmentDetails" ToRole="TicketRequests" />
+        </EntityType>
+        <EntityType Name="EmployeeList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="EmployeeDepartmentDetails" Relationship="Self.FK_EmployeeDepartmentDetails_EmployeeList" FromRole="EmployeeList" ToRole="EmployeeDepartmentDetails" />
+        </EntityType>
+        <EntityType Name="TicketRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EmployeeDeparmentId" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="EmployeeDepartmentDetail" Relationship="Self.FK_TicketRequests_EmployeeDepartmentDetails" FromRole="TicketRequests" ToRole="EmployeeDepartmentDetails" />
+        </EntityType>
+        <Association Name="FK_EmployeeDepartmentDetails_DepartmentList">
+          <End Role="DepartmentList" Type="Self.DepartmentList" Multiplicity="0..1" />
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DepartmentList">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeDepartmentDetails_EmployeeList">
+          <End Role="EmployeeList" Type="Self.EmployeeList" Multiplicity="0..1" />
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeList">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TicketRequests_EmployeeDepartmentDetails">
+          <End Role="EmployeeDepartmentDetails" Type="Self.EmployeeDepartmentDetail" Multiplicity="1" />
+          <End Role="TicketRequests" Type="Self.TicketRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDepartmentDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TicketRequests">
+              <PropertyRef Name="EmployeeDeparmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TicketingSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DepartmentLists" EntityType="Self.DepartmentList" />
+          <EntitySet Name="EmployeeDepartmentDetails" EntityType="Self.EmployeeDepartmentDetail" />
+          <EntitySet Name="EmployeeLists" EntityType="Self.EmployeeList" />
+          <EntitySet Name="TicketRequests" EntityType="Self.TicketRequest" />
+          <AssociationSet Name="FK_EmployeeDepartmentDetails_DepartmentList" Association="Self.FK_EmployeeDepartmentDetails_DepartmentList">
+            <End Role="DepartmentList" EntitySet="DepartmentLists" />
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeDepartmentDetails_EmployeeList" Association="Self.FK_EmployeeDepartmentDetails_EmployeeList">
+            <End Role="EmployeeList" EntitySet="EmployeeLists" />
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TicketRequests_EmployeeDepartmentDetails" Association="Self.FK_TicketRequests_EmployeeDepartmentDetails">
+            <End Role="EmployeeDepartmentDetails" EntitySet="EmployeeDepartmentDetails" />
+            <End Role="TicketRequests" EntitySet="TicketRequests" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TicketingSystemModelStoreContainer" CdmEntityContainer="TicketingSystemEntities">
+          <EntitySetMapping Name="DepartmentLists">
+            <EntityTypeMapping TypeName="TicketingSystemModel.DepartmentList">
+              <MappingFragment StoreEntitySet="DepartmentList">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeDepartmentDetails">
+            <EntityTypeMapping TypeName="TicketingSystemModel.EmployeeDepartmentDetail">
+              <MappingFragment StoreEntitySet="EmployeeDepartmentDetails">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeLists">
+            <EntityTypeMapping TypeName="TicketingSystemModel.EmployeeList">
+              <MappingFragment StoreEntitySet="EmployeeList">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TicketRequests">
+            <EntityTypeMapping TypeName="TicketingSystemModel.TicketRequest">
+              <MappingFragment StoreEntitySet="TicketRequests">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="EmployeeDeparmentId" ColumnName="EmployeeDeparmentId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,175 @@
+﻿@model IEnumerable<TicketingSystem.Models.TicketRequestModel>
+
+@{
+    ViewBag.Title = TicketingSystem.Resource.SearchTicket;
+}
+<link rel="stylesheet" type="text/css" href="~/Content/DataTables/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<h2>Details</h2>
+
+<div>
+    <hr />
+    <div class="col-md-12">
+        <div class="col-md-3">
+            <label>@TicketingSystem.Resource.ProjectName</label>
+            <input type="text" class="searchFields" id="projectName" name="projectName" />
+        </div>
+        <div class="col-md-3">
+            <label>@TicketingSystem.Resource.RequestedBy</label>
+            <input type="text" class="searchFields" id="employeeName" name="employeeName" />
+        </div>
+        <div class="col-md-3">
+            <label>@TicketingSystem.Resource.DepartmentName</label>
+            <input type="text" class="searchFields" id="departmentName" name="departmentName" />
+        </div>
+        <div class="col-md-3">
+            <label>@TicketingSystem.Resource.ProblemDescription</label>
+            <input type="text" class="searchFields" id="description" name="description" />
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-8">
+            <label>@TicketingSystem.Resource.CreatedDate</label>
+            <div class="input-group" style="width:100%">
+                <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <input type="text" class="form-control searchFields" id="createdDate" style="max-width:100%">
+            </div>
+        </div>
+
+        <div class="col-md-4" style="margin-top:30px">
+            <button type="button" id="btnSearch">@TicketingSystem.Resource.Search</button>
+        </div>
+
+    </div>
+
+</div>
+<div id="divTicketDetails">
+    <table class="table table-bordered" id="divTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProjectName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DepartmentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EmployeeName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartmentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript" src="~/Content/DataTables/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" defer></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+    $('#createdDate').daterangepicker({
+        timePicker: true,
+        locale: {
+            format: 'DD/MMM/YYYY hh:mm A'
+        }
+    });
+    $(document).ready(function () {
+        $('#divTable').DataTable({
+            'responsive': true,
+            'paging': true,
+            'lengthChange': false,
+            'searching': false,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        });
+
+    });
+    $("#btnSearch").click(function () {
+        var projectName = $("#projectName").val();
+        var employeeName = $("#employeeName").val();
+        var departmentName = $("#departmentName").val();
+        var description = $("#description").val();
+        var fromDate = fromDate;
+        var toDate = toDate;
+         $.ajax({
+            type: "Get",
+            url: "/TicketRequests/SearchTickets",
+             data: {
+                 projectName: projectName, employeeName: employeeName, departmentName: departmentName, fromDate: fromDate, toDate: toDate, description: description
+            },
+            cache: true,
+            success: function (result) {
+                var html = "<table id='divTable' class='table table-responsive table-bordered table-striped'><thead><tr>" +
+                    "<th>@Html.DisplayNameFor(model => model.ProjectName)</th><th>@Html.DisplayNameFor(model => model.DepartmentName)</th>" +
+                    "<th>@Html.DisplayNameFor(model => model.CreatedDate)</th><th>@Html.DisplayNameFor(model => model.EmployeeName)</th>" +
+                    "<th>@Html.DisplayNameFor(model => model.Description)</th></tr></thead><tbody>";
+                var id = 0;
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        id = ++id;
+
+                        var date = new Date(parseInt(result[i].CreatedDate.replace("/Date(", "").replace(")/", "")));
+                        var dateValue = date.toLocaleDateString() + " " + date.toLocaleTimeString();
+                        html += "<td>" + result[i].ProjectName + "</td><td>" + result[i].DepartmentName
+                            + "</td><td>" + dateValue + "</td><td>" + result[i].EmployeeName + "</td><td>" + result[i].Description +
+                            "</td></tr>";
+
+                    }
+                }
+                html += '</tbody></table>';
+                $("#divTicketDetails").html(html);
+                $('#divTable').DataTable({
+                    'responsive': true,
+                    'paging': true,
+                    'lengthChange': false,
+                    'searching': false,
+                    'ordering': true,
+                    'info': true,
+                    'autoWidth': false
+                });
+            }
+        });
+
+    });
+    var fromDate = null;
+    var toDate = null;
+    $("#createdDate").on('apply.daterangepicker', function (ev, picker) {
+        fromDate = picker.startDate.format('MM/DD/YYYY');
+        toDate = picker.endDate.format('MM/DD/YYYY');
+
+    });
+</script>
